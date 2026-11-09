@@ -6,9 +6,15 @@ const HEADERS = [
   "Alergias o intolerancias",
   "Fecha de registro",
 ];
+// Hoja de respuestas de la boda (el ID no es secreto; el acceso se controla en Google).
+// SPREADSHEET_ID en Script Properties tiene prioridad si existe.
+const DEFAULT_SPREADSHEET_ID = "1LeYac-7tppgQsIY0pYV9pX2NB8rd0dJ5r6L3PmfZTX4";
+function spreadsheetId(p) {
+  return p.getProperty("SPREADSHEET_ID") || DEFAULT_SPREADSHEET_ID;
+}
 function setupSheet() {
   const p = PropertiesService.getScriptProperties();
-  const book = SpreadsheetApp.openById(p.getProperty("SPREADSHEET_ID"));
+  const book = SpreadsheetApp.openById(spreadsheetId(p));
   const sheet = book.getSheetByName(p.getProperty("SHEET_NAME"));
   if (!sheet)
     throw new Error("Configure SHEET_NAME con el nombre real de la pestaña.");
@@ -73,7 +79,7 @@ function doPost(e) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) return out({ ok: false });
   try {
-    const book = SpreadsheetApp.openById(p.getProperty("SPREADSHEET_ID"));
+    const book = SpreadsheetApp.openById(spreadsheetId(p));
     const sheet = book.getSheetByName(p.getProperty("SHEET_NAME"));
     if (
       !sheet ||

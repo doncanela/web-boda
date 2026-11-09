@@ -1,6 +1,6 @@
 # Paula & Javier · Granada · 06.11.2027
 
-Primera versión ejecutable en React + TypeScript + Vite + React Router. Inspirada en la **opción 1 de la página 4** de Flural Paper Studio: marfil, azul marino, marco vegetal y composición de invitación. Los SVG son provisionales propios, no recortes del PDF ni reproducciones arquitectónicas exactas. No se incluye el PDF en este repositorio público.
+Primera versión ejecutable en React + TypeScript + Vite + React Router. Inspirada en la **opción 1 de la página 4** de Flural Paper Studio: marfil, azul marino, marco vegetal y composición de invitación. Las ilustraciones (Catedral, Alhambra, granada y ramas) son las facilitadas por los novios. No se incluye el PDF en este repositorio público.
 
 ## Abrir en tu ordenador
 
@@ -27,7 +27,7 @@ npm test         # validación, API y Apps Script con dobles de Google
 
 - Rutas: inicio, la boda, alojamiento, turismo, dress code, regalo, RSVP, privacidad y 404.
 - Cuenta atrás con fecha ISO y zona de Madrid, menú móvil, filtros por duración, enlaces a mapas, copia de IBAN cuando exista.
-- SVG originales provisionales, fuentes locales Cormorant Garamond / Great Vibes (OFL a través de Fontsource), textura SVG de papel. Sin trackers, iframes ni peticiones de fuentes a Google.
+- Ilustraciones de los novios: Catedral y Alhambra (`catedral.webp`, `alhambra.webp`), granada (`granada.png`) y marco simétrico alrededor de la web con `Flor1/2/3` y granadas en las cuatro esquinas (`public/illustrations/marco/`, componente `PageFrame` en `src/components.tsx`; la mitad derecha/inferior es el espejo exacto de la izquierda/superior). Paleta: `#182751`, `#426280`, `#81A6B8`, `#E6E1CD`, `#FBF9EF` (variables en `src/styles.css`). Fuentes locales Cormorant Garamond / Great Vibes (OFL a través de Fontsource), textura SVG de papel. Sin trackers, iframes ni peticiones de fuentes a Google.
 - `rsvpEnabled: false`: integración escrita, NO conectada a Google ni probada extremo a extremo. La hoja NO se ha modificado ni se han verificado sus permisos. La aplicación NO está publicada.
 - Las fotografías, ilustraciones definitivas, restaurantes seleccionados y algunos datos prácticos siguen pendientes. No se han sustituido por imágenes de otros lugares ni por horarios inventados.
 - Diseño responsive implementado; la auditoría completa en dispositivos reales y lectores de pantalla queda pendiente antes de publicar.
@@ -39,7 +39,7 @@ npm test         # validación, API y Apps Script con dobles de Google
 | `src/config.ts`         | Fecha, lugares, hoteles, horarios, rutas, transporte, IBAN, etiqueta, contacto y apertura de RSVP |
 | `src/main.tsx`          | Páginas y componentes reutilizables: Title, Flower, External, Countdown y navegación              |
 | `src/styles.css`        | Paleta, tamaños, composición y breakpoints                                                        |
-| `public/illustrations/` | SVG provisionales intercambiables por originales autorizados                                      |
+| `public/illustrations/` | Ilustraciones definitivas (Catedral, Alhambra, granada) y ramas del marco en `marco/`            |
 | `src/validation.mjs`    | Validación compartida entre cliente y Pages Function                                              |
 | `functions/api/rsvp.js` | Proxy privado a Google Apps Script                                                                |
 | `server/Code.gs`        | Inserción protegida en Google Sheets                                                              |
@@ -62,7 +62,7 @@ Cada token de 32 bytes aleatorios se vincula en servidor a un email normalizado 
 1. Conectar Google Drive/Sheets y comprobar identidad, `canEdit`/rol de editor y acceso real a la hoja indicada. El enlace no acredita permisos. Revisar que la hoja no esté compartida públicamente ni con lectores innecesarios, especialmente antes de recoger alergias.
 2. Abrir la hoja y su editor Apps Script. Copiar `server/Code.gs`.
 3. Configurar **Script Properties**, nunca el código público:
-   - `SPREADSHEET_ID`: el ID de la hoja que proporcionaste (obtenerlo de tu enlace).
+   - `SPREADSHEET_ID`: ID de la hoja de respuestas, `1LeYac-7tppgQsIY0pYV9pX2NB8rd0dJ5r6L3PmfZTX4` (<https://docs.google.com/spreadsheets/d/1LeYac-7tppgQsIY0pYV9pX2NB8rd0dJ5r6L3PmfZTX4/edit>). `server/Code.gs` lo usa por defecto si la propiedad no existe.
    - `SHEET_NAME`: nombre exacto de la pestaña, no se asume «Hoja 1».
    - `SHARED_SECRET`: secreto aleatorio de al menos 32 bytes.
    - `INVITATIONS_JSON`: objeto `{ "sha256_del_token": "email_normalizado" }`.

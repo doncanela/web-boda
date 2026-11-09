@@ -1,21 +1,123 @@
 :root {
   font-family: Georgia, "Times New Roman", serif;
-  color: #243e60;
-  background: #f8f6f0;
+  color: #182751;
+  background: #fbf9ef;
   font-synthesis: none;
   font-weight: 400;
   line-height: 1.7;
-  --ink: #243e60;
-  --blue: #3c5f80;
-  --paper: #f8f6f0;
-  --line: #c7cdd0;
+  /* Paleta de la boda */
+  --ink: #182751;
+  --blue: #426280;
+  --sky: #81a6b8;
+  --sand: #e6e1cd;
+  --paper: #fbf9ef;
+  --line: #cdd3cc;
+  --frame: 56px;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
+  padding: var(--frame);
+  background-color: var(--paper);
   background-image: url("/illustrations/paper.svg");
+}
+.page-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+.pf-edge {
+  position: absolute;
+  display: flex;
+  background: var(--paper);
+}
+.pf-top,
+.pf-bottom {
+  left: 0;
+  right: 0;
+  height: var(--frame);
+  flex-direction: row;
+}
+.pf-top {
+  top: 0;
+}
+.pf-bottom {
+  bottom: 0;
+  transform: scaleY(-1);
+}
+.pf-left,
+.pf-right {
+  top: 0;
+  bottom: 0;
+  width: var(--frame);
+  flex-direction: column;
+}
+.pf-left {
+  left: 0;
+}
+.pf-right {
+  right: 0;
+  transform: scaleX(-1);
+}
+.pf-half {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pf-top .pf-half,
+.pf-bottom .pf-half {
+  flex-direction: row;
+}
+.pf-left .pf-half,
+.pf-right .pf-half {
+  flex-direction: column;
+}
+.pf-mirror-x {
+  transform: scaleX(-1);
+}
+.pf-mirror-y {
+  transform: scaleY(-1);
+}
+.pf-half img {
+  flex: none;
+  max-width: none;
+}
+.pf-corner {
+  position: absolute;
+  max-width: none;
+}
+.pf-tl {
+  top: 0;
+  left: 0;
+}
+.pf-tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+.pf-bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+.pf-br {
+  bottom: 0;
+  right: 0;
+  transform: scale(-1, -1);
+}
+@media print {
+  .page-frame {
+    display: none;
+  }
+  body {
+    padding: 0;
+  }
 }
 a {
   color: inherit;
@@ -58,7 +160,7 @@ h3 {
   font-size: 1.4rem;
 }
 p {
-  color: #465870;
+  color: var(--blue);
 }
 img {
   max-width: 100%;
@@ -82,7 +184,7 @@ main > section:not(.hero) {
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  border-bottom: 1px solid #243e601c;
+  border-bottom: 1px solid #1827511c;
 }
 .monogram {
   font-size: 2rem;
@@ -136,8 +238,6 @@ nav .nav-rsvp {
   margin: auto;
   text-align: center;
   padding: 58px 85px 36px;
-  border: 36px solid transparent;
-  border-image: url("/illustrations/border.svg") 54 round;
   position: relative;
 }
 .invitation h1 {
@@ -149,7 +249,7 @@ nav .nav-rsvp {
 .invitation h1 span {
   font-size: 0.62em;
   font-weight: 400;
-  color: #6c8195;
+  color: var(--sky);
   margin: 0 10px;
 }
 .date {
@@ -158,7 +258,7 @@ nav .nav-rsvp {
 }
 .small-rule {
   width: 36px;
-  border-top: 1px solid #9caab8;
+  border-top: 1px solid var(--sky);
   margin: 22px auto;
 }
 .hero-copy {
@@ -191,7 +291,7 @@ nav .nav-rsvp {
   align-items: center;
   gap: 30px;
   background: var(--ink);
-  color: #fffdf5;
+  color: var(--paper);
   border: 1px solid var(--ink);
   padding: 14px 25px;
   text-decoration: none;
@@ -201,7 +301,7 @@ nav .nav-rsvp {
     transform 0.2s;
 }
 .button:hover {
-  background: #3b5b80;
+  background: var(--blue);
   transform: translateY(-2px);
 }
 .hero-foot {
@@ -217,7 +317,7 @@ nav .nav-rsvp {
   writing-mode: vertical-rl;
   font: 9px Arial;
   letter-spacing: 0.25em;
-  color: #738095;
+  color: var(--blue);
 }
 .count-section {
   text-align: center;
@@ -276,12 +376,6 @@ nav .nav-rsvp {
   font-weight: 400;
   margin-left: auto;
 }
-.flower {
-  height: 48px;
-  width: 48px;
-  object-fit: contain;
-  margin: 0 auto 22px;
-}
 .page-title {
   text-align: center;
   max-width: 750px;
@@ -308,7 +402,7 @@ nav .nav-rsvp {
   font-size: 2rem;
 }
 .art-panel {
-  background: #eeeee8;
+  background: var(--sand);
   padding: 30px;
   margin-bottom: 30px;
   text-align: center;
@@ -322,7 +416,7 @@ nav .nav-rsvp {
 .dress-art span {
   font: 8px Arial;
   letter-spacing: 0.13em;
-  color: #5e7083;
+  color: var(--blue);
 }
 .address {
   font-style: italic;
@@ -356,10 +450,8 @@ nav .nav-rsvp {
 }
 .timeline li > span {
   font-style: italic;
-}
-.timeline .flower {
-  height: 30px;
-  margin: 20px auto;
+  display: block;
+  margin-bottom: 18px;
 }
 .timeline h3 {
   font-size: 1.3rem;
@@ -371,13 +463,13 @@ nav .nav-rsvp {
   font-size: 0.85rem;
   text-align: center;
   padding: 25px;
-  color: #637083;
+  color: var(--blue);
 }
 .notice {
-  background: #eaf0f2;
+  background: #81a6b829;
   padding: 40px;
   text-align: center;
-  border: 1px solid #d3dee3;
+  border: 1px solid #81a6b855;
   margin: 0 30px 45px;
 }
 .notice p {
@@ -431,19 +523,16 @@ nav .nav-rsvp {
 .route-number {
   font-size: 3.3rem;
   font-style: italic;
-  color: #8c9aaa;
+  color: var(--sky);
   display: block;
   margin-bottom: 30px;
 }
 .editorial-note {
   display: flex;
   gap: 40px;
-  background: #edf0ed;
+  background: #e6e1cd88;
   padding: 45px;
   margin: 60px 30px;
-}
-.editorial-note .flower {
-  flex-shrink: 0;
 }
 .editorial-note p {
   max-width: 750px;
@@ -458,9 +547,6 @@ nav .nav-rsvp {
   font-size: 1.15rem;
   max-width: 580px;
   margin: auto;
-}
-.gift-copy .flower {
-  margin: 35px auto;
 }
 .pending {
   font-style: italic;
@@ -483,7 +569,7 @@ nav .nav-rsvp {
   gap: 60px;
 }
 .dress-art {
-  background: #e9edf0;
+  background: #81a6b81f;
   padding: 35px;
   text-align: center;
 }
@@ -525,7 +611,7 @@ nav .nav-rsvp {
   margin-bottom: 22px;
 }
 .rsvp-form label span {
-  color: #697483;
+  color: var(--blue);
   font-size: 0.8rem;
 }
 .form-row {
@@ -537,7 +623,7 @@ input:not([type="checkbox"]),
 textarea {
   display: block;
   width: 100%;
-  border: 1px solid #a4b2bf;
+  border: 1px solid var(--sky);
   background: #fffdfa88;
   border-radius: 0;
   padding: 13px;
@@ -560,7 +646,7 @@ textarea {
 }
 .field-help {
   font-size: 0.8rem;
-  color: #647082;
+  color: var(--blue);
   margin-top: 10px;
 }
 .compact {
@@ -593,10 +679,6 @@ footer > div {
   font-size: 0.7rem;
   color: #637083;
 }
-footer .flower {
-  height: 35px;
-  margin-bottom: 18px;
-}
 .skip {
   position: fixed;
   top: -100px;
@@ -608,7 +690,7 @@ footer .flower {
   top: 10px;
 }
 :focus-visible {
-  outline: 2px solid #527ba1;
+  outline: 2px solid var(--blue);
   outline-offset: 5px;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -667,7 +749,7 @@ footer .flower {
     right: 0;
     background: var(--paper);
     padding: 25px;
-    box-shadow: 0 15px 20px #243e6012;
+    box-shadow: 0 15px 20px #18275112;
   }
   nav.open {
     display: flex;
@@ -687,7 +769,6 @@ footer .flower {
   }
   .invitation {
     padding: 30px 10px 20px;
-    border-width: 23px;
   }
   .invitation h1 {
     font-size: clamp(2.7rem, 9vw, 4.5rem);
@@ -769,9 +850,6 @@ footer .flower {
     margin: 35px 24px;
     padding: 30px;
     gap: 10px;
-  }
-  .editorial-note > .flower {
-    display: none;
   }
   .climate {
     flex-wrap: wrap;

@@ -14,7 +14,7 @@ import "@fontsource/cormorant-garamond/latin-400.css";
 import "@fontsource/cormorant-garamond/latin-400-italic.css";
 import "@fontsource/great-vibes/latin-400.css";
 import "./styles.css";
-import { Flower, External, Title, Countdown } from "./components";
+import { External, Title, Countdown, PageFrame } from "./components";
 let invitationInMemory = "";
 const links = [
   ["/", "Inicio"],
@@ -103,13 +103,8 @@ function Wedding() {
             <div className="art-panel">
               <img
                 src={v.photo || v.illustration}
-                alt={
-                  v.photo
-                    ? v.name
-                    : "Ilustración provisional de arquitectura granadina"
-                }
+                alt={v.photo ? v.name : `Ilustración de ${v.name}`}
               />
-              <span>ILUSTRACIÓN PROVISIONAL · ORIGINAL PENDIENTE</span>
             </div>
             <p className="eyebrow">
               {v.subtitle} · {v.time} H
@@ -134,7 +129,6 @@ function Wedding() {
           {w.timeline.map((t) => (
             <li key={t.title}>
               <span>{t.time}</span>
-              <Flower />
               <h3>{t.title}</h3>
               <p>{t.detail}</p>
             </li>
@@ -266,7 +260,6 @@ function Tourism() {
           ))}
       </div>
       <div className="editorial-note">
-        <Flower />
         <div>
           <h2>Un consejo de casa</h2>
           <p>
@@ -305,7 +298,6 @@ function Gift() {
           Gracias por formar parte de nuestra historia y de todo lo que está por
           venir.
         </p>
-        <Flower />
         {w.iban ? (
           <>
             <p className="iban">{w.iban}</p>
@@ -591,6 +583,7 @@ function App() {
   }, [loc.pathname]);
   return (
     <>
+      <PageFrame />
       <a className="skip" href="#main">
         Saltar al contenido
       </a>
@@ -645,7 +638,6 @@ function App() {
         </Routes>
       </main>
       <footer>
-        <Flower />
         <p className="signature">Paula & Javier</p>
         <p className="eyebrow">06.11.2027 · GRANADA</p>
         <div>

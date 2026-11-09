@@ -15,7 +15,7 @@ export const wedding = {
       address: "Calle Oficios, s/n · 18001 Granada",
       verified: true,
       source: "https://www.sacramentalsagrariogr.com/parroquia",
-      illustration: "/illustrations/ceremony.svg",
+      illustration: "/illustrations/catedral.webp",
       photo: "",
       description: "En el corazón de Granada, donde empieza nuestro sí.",
       directions:
@@ -30,7 +30,7 @@ export const wedding = {
       verified: false,
       source:
         "https://turismo.granada.org/es/empresas/otras-salas-reuniones/carmen-chapiteles",
-      illustration: "/illustrations/carmen.svg",
+      illustration: "/illustrations/alhambra.webp",
       photo: "",
       description:
         "A los pies de la Alhambra, para brindar, compartir y bailar.",

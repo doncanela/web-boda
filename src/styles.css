@@ -13,19 +13,26 @@
   --paper: #fbf9ef;
   --line: #cdd3cc;
   --frame: 56px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  padding: var(--frame);
+  padding: calc(var(--frame) + env(safe-area-inset-top))
+    calc(var(--frame) + env(safe-area-inset-right))
+    calc(var(--frame) + env(safe-area-inset-bottom))
+    calc(var(--frame) + env(safe-area-inset-left));
   background-color: var(--paper);
   background-image: url("/illustrations/paper.svg");
+  overflow-wrap: break-word;
 }
 .page-frame {
   position: fixed;
-  inset: 0;
+  inset: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
   z-index: 40;
   pointer-events: none;
 }
@@ -171,13 +178,13 @@ main {
 }
 main > div:not(.narrow),
 main > section:not(.hero) {
-  max-width: 1160px;
+  max-width: 72.5rem;
   margin-left: auto;
   margin-right: auto;
 }
 .site-header {
   height: 106px;
-  max-width: 1440px;
+  max-width: 90rem;
   margin: auto;
   padding: 0 5%;
   display: flex;
@@ -230,11 +237,11 @@ nav .nav-rsvp {
 .hero {
   padding: 48px 100px 56px;
   position: relative;
-  max-width: 1440px;
+  max-width: 90rem;
   margin: auto;
 }
 .invitation {
-  max-width: 1060px;
+  max-width: 66.25rem;
   margin: auto;
   text-align: center;
   padding: 58px 85px 36px;
@@ -333,7 +340,8 @@ nav .nav-rsvp {
   margin-top: 32px;
 }
 .countdown > div {
-  width: 130px;
+  flex: 0 1 130px;
+  min-width: 0;
   border-right: 1px solid var(--line);
 }
 .countdown > div:last-child {
@@ -629,6 +637,7 @@ textarea {
   padding: 13px;
   color: var(--ink);
   margin-top: 8px;
+  font-size: max(16px, 1rem); /* evita el zoom automático de iOS */
 }
 textarea {
   resize: vertical;
@@ -666,7 +675,7 @@ footer {
   margin: 80px auto 0;
   padding: 45px 30px 25px;
   border-top: 1px solid var(--line);
-  max-width: 1300px;
+  max-width: 81.25rem;
 }
 footer .signature {
   margin: 0 0 10px;
@@ -674,7 +683,7 @@ footer .signature {
 footer > div {
   display: flex;
   justify-content: space-between;
-  max-width: 1100px;
+  max-width: 68.75rem;
   margin: 40px auto 0;
   font-size: 0.7rem;
   color: #637083;
@@ -709,6 +718,11 @@ footer > div {
     }
   }
 }
+@media (min-width: 1700px) {
+  :root {
+    font-size: 112.5%;
+  }
+}
 @media (max-width: 1100px) {
   nav {
     gap: 16px;
@@ -727,7 +741,22 @@ footer > div {
     display: none;
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .explore {
+    gap: 45px;
+  }
+  .dress-layout {
+    gap: 40px;
+  }
+  .venue-grid {
+    gap: 32px;
+  }
+}
+/* Menú desplegable en tablets y móviles */
+@media (max-width: 900px) {
   .site-header {
     height: 80px;
     padding: 0 24px;
@@ -740,16 +769,20 @@ footer > div {
     background: transparent;
     color: var(--ink);
     font-size: 0.85rem;
+    padding: 12px 0 12px 12px;
   }
   nav {
     display: none;
     position: absolute;
-    top: 79px;
+    top: 100%;
     left: 0;
     right: 0;
     background: var(--paper);
     padding: 25px;
     box-shadow: 0 15px 20px #18275112;
+    max-height: calc(100vh - var(--frame) * 2 - 90px);
+    max-height: calc(100dvh - var(--frame) * 2 - 90px);
+    overflow-y: auto;
   }
   nav.open {
     display: flex;
@@ -764,6 +797,11 @@ footer > div {
   nav .nav-rsvp {
     margin-top: 15px;
   }
+  .timeline {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 800px) {
   .hero {
     padding: 24px 15px 36px;
   }
@@ -921,5 +959,121 @@ h3 {
 @media (max-width: 800px) {
   .invitation h1 {
     font-size: clamp(2.9rem, 10vw, 4.9rem);
+  }
+}
+/* Móviles estrechos */
+@media (max-width: 480px) {
+  .site-header {
+    padding: 0 12px;
+  }
+  .hero {
+    padding: 16px 4px 28px;
+  }
+  .invitation {
+    padding: 24px 4px 16px;
+  }
+  .explore,
+  .venue-grid,
+  .cards,
+  .cards.two,
+  .dress-layout {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .narrow {
+    padding: 0 12px;
+  }
+  .page-title {
+    padding: 36px 12px 28px;
+  }
+  .page-title h1 {
+    font-size: 2.4rem;
+  }
+  .timeline {
+    grid-template-columns: 1fr;
+  }
+  .timeline-section {
+    padding: 40px 12px;
+  }
+  .notice {
+    margin: 0 12px 30px;
+    padding: 24px 16px;
+  }
+  .editorial-note {
+    margin: 30px 12px;
+    padding: 22px;
+  }
+  .card {
+    padding: 22px;
+  }
+  .climate {
+    padding: 30px 12px;
+  }
+  .art-panel {
+    padding: 18px;
+  }
+  .signature {
+    font-size: 2.2rem;
+  }
+  footer {
+    padding: 35px 12px 20px;
+  }
+  footer > div {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .countdown strong {
+    font-size: 1.7rem;
+  }
+  .countdown span {
+    font-size: 7px;
+    letter-spacing: 0.08em;
+  }
+  .link-row {
+    gap: 4px 16px;
+  }
+}
+/* Móvil apaisado: poca altura */
+@media (max-height: 500px) and (orientation: landscape) {
+  .site-header {
+    height: 64px;
+  }
+  nav.open {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 12px 25px;
+  }
+  nav .nav-rsvp {
+    margin-top: 0;
+  }
+  .hero {
+    padding-top: 12px;
+    padding-bottom: 24px;
+  }
+  .page-title {
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
+}
+/* Pantallas táctiles: objetivos de toque de al menos 44 px */
+@media (pointer: coarse) {
+  .button,
+  .filter button,
+  .menu-toggle,
+  nav a {
+    min-height: 44px;
+  }
+  .text-link {
+    padding: 6px 0;
+  }
+  .explore-links a {
+    min-height: 56px;
+  }
+}
+/* Sin hover en táctil: evitar saltos al tocar */
+@media (hover: none) {
+  .button:hover {
+    transform: none;
   }
 }

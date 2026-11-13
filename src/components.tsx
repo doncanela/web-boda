@@ -1,4 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { wedding as w } from "./config";
 
 /* Marco simétrico: cuatro esquinas con granada y ramas que crecen desde las
@@ -14,6 +19,14 @@ const POMEGRANATE = { w: 145, h: 221 };
 const SRC_UNIT = 150; // píxeles de origen equivalentes al grosor de la banda
 const TOP_ORDER: SprigId[] = [3, 1, 2];
 const SIDE_ORDER: SprigId[] = [2, 1, 3];
+
+function frameSize(w: number, h: number) {
+  if (w <= 480 || (h <= 500 && w > h)) return 26; // móvil / móvil apaisado
+  if (w <= 800) return 34;
+  if (w <= 1200) return 46;
+  if (w <= 1700) return 56;
+  return 68;
+}
 
 function pickSprigs(
   space: number,
@@ -35,17 +48,27 @@ function pickSprigs(
 }
 
 export function PageFrame() {
+  const ref = useRef<HTMLDivElement>(null);
   const [vp, setVp] = useState({
     w: window.innerWidth,
     h: window.innerHeight,
   });
-  useEffect(() => {
-    const onResize = () =>
-      setVp({ w: window.innerWidth, h: window.innerHeight });
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+  // Se mide el propio marco (respeta zonas seguras y barras del navegador móvil).
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () =>
+      setVp((p) =>
+        p.w === el.clientWidth && p.h === el.clientHeight
+          ? p
+          : { w: el.clientWidth, h: el.clientHeight },
+      );
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
-  const t = vp.w <= 800 ? 34 : 56;
+  const t = frameSize(vp.w, vp.h);
   useLayoutEffect(() => {
     document.documentElement.style.setProperty("--frame", t + "px");
   }, [t]);
@@ -82,7 +105,7 @@ export function PageFrame() {
   const padX = { paddingLeft: cornerW, paddingRight: tip };
   const padY = { paddingTop: cornerH, paddingBottom: tip };
   return (
-    <div className="page-frame" aria-hidden="true">
+    <div className="page-frame" aria-hidden="true" ref={ref}>
       {["top", "bottom"].map((side) => (
         <div key={side} className={"pf-edge pf-" + side}>
           <div className="pf-half" style={padX}>

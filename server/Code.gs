@@ -64,18 +64,7 @@ function doPost(e) {
     (d.allergies.trim() && d.sensitiveConsent !== true)
   )
     return out({ ok: false });
-  if (typeof d.invitation !== "string" || !/^[a-f0-9]{64}$/.test(d.invitation))
-    return out({ ok: false });
   const email = d.email.trim().toLowerCase();
-  const hash = Utilities.computeDigest(
-    Utilities.DigestAlgorithm.SHA_256,
-    d.invitation,
-  )
-    .map((x) => ("0" + ((x + 256) % 256).toString(16)).slice(-2))
-    .join("");
-  // Map sha256(invitation secret) -> normalized email in Script Properties.
-  const invitations = JSON.parse(p.getProperty("INVITATIONS_JSON") || "{}");
-  if (invitations[hash] !== email) return out({ ok: true }); // No email enumeration.
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) return out({ ok: false });
   try {

@@ -1,5 +1,47 @@
+/* Mismo tamaño visual que Georgia (antes de cambiar la tipografía): EB Garamond tiene menor altura de x. */
+@font-face {
+  font-family: "EB Garamond";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  size-adjust: 120%;
+  src: url("./fonts/eb-garamond.woff2") format("woff2");
+}
+/* Títulos: se mantienen al tamaño que tenían con Cormorant Garamond. */
+@font-face {
+  font-family: "EB Garamond Heading";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("./fonts/eb-garamond.woff2") format("woff2");
+}
+/* Cursivas: Georgia Italic como antes; si no está instalada, Cormorant Garamond Italic. */
+@font-face {
+  font-family: "EB Garamond";
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+  src:
+    local("Georgia Italic"),
+    local("Georgia-Italic"),
+    url("./fonts/cormorant-garamond-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Great Vibes";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/great-vibes.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Parfumerie";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/parfumerie.woff2") format("woff2");
+}
 :root {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
   color: #182751;
   background: #fbf9ef;
   font-synthesis: none;
@@ -13,6 +55,8 @@
   --paper: #fbf9ef;
   --line: #cdd3cc;
   --frame: 56px;
+  --radius: 5px;
+  --shadow: 0 6px 18px #18275126;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -183,6 +227,10 @@ main > section:not(.hero) {
   margin-right: auto;
 }
 .site-header {
+  position: sticky;
+  top: calc(var(--frame) + env(safe-area-inset-top));
+  z-index: 30;
+  background: var(--paper) url("/illustrations/paper.svg");
   height: 106px;
   max-width: 90rem;
   margin: auto;
@@ -209,20 +257,22 @@ main > section:not(.hero) {
 nav {
   display: flex;
   align-items: center;
-  gap: 27px;
-  font-size: 0.82rem;
+  font-size: 1.05rem;
 }
 nav a {
   text-decoration: none;
   white-space: nowrap;
+  padding: 4px 20px;
 }
-nav a.active:not(.nav-rsvp) {
+nav a + a {
+  border-left: 1px solid #1827511c;
+}
+nav a:last-child {
+  padding-right: 0;
+}
+nav a.active {
   text-decoration: underline;
   text-underline-offset: 8px;
-}
-nav .nav-rsvp {
-  border: 1px solid var(--ink);
-  padding: 10px 17px;
 }
 .menu-toggle {
   display: none;
@@ -420,8 +470,7 @@ nav .nav-rsvp {
   width: 100%;
   object-fit: contain;
 }
-.art-panel span,
-.dress-art span {
+.art-panel span {
   font: 8px Arial;
   letter-spacing: 0.13em;
   color: var(--blue);
@@ -459,7 +508,15 @@ nav .nav-rsvp {
 .timeline li > span {
   font-style: italic;
   display: block;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
+}
+.timeline-icon {
+  display: block;
+  width: auto;
+  height: 110px;
+  max-width: 100%;
+  margin: 0 auto 14px;
+  object-fit: contain;
 }
 .timeline h3 {
   font-size: 1.3rem;
@@ -556,21 +613,11 @@ nav .nav-rsvp {
   max-width: 580px;
   margin: auto;
 }
-.pending {
-  font-style: italic;
-  font-size: 1rem;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 25px;
-}
 .signature {
   font-style: italic;
   font-size: 2rem;
   color: var(--ink);
   margin-top: 35px;
-}
-.iban {
-  overflow-wrap: anywhere;
 }
 .dress-layout {
   align-items: center;
@@ -582,33 +629,22 @@ nav .nav-rsvp {
   text-align: center;
 }
 .dress-art img {
-  height: 380px;
+  height: 520px;
   width: 100%;
   object-fit: contain;
 }
-.climate {
-  display: flex;
-  gap: 35px;
-  align-items: center;
-  border-top: 1px solid var(--line);
-  padding: 40px 30px;
-  margin-top: 50px !important;
+.dress-text h3 {
+  font-size: 1.6rem;
+  margin: 28px 0 6px;
 }
-.climate > div {
-  min-width: 130px;
+.dress-text h3:first-child {
+  margin-top: 0;
 }
-.climate strong {
-  font-size: 2.7rem;
-  font-weight: 400;
-  white-space: nowrap;
-}
-.climate span {
-  display: block;
-  font-size: 0.8rem;
-}
-.climate p {
-  font-size: 0.85rem;
+.dress-text p {
   margin: 0;
+}
+.intro + .intro {
+  margin-top: 14px;
 }
 .rsvp-form {
   padding: 20px 0;
@@ -725,8 +761,10 @@ footer > div {
 }
 @media (max-width: 1100px) {
   nav {
-    gap: 16px;
-    font-size: 0.73rem;
+    font-size: 0.92rem;
+  }
+  nav a {
+    padding: 4px 8px;
   }
   .site-header {
     padding: 0 3%;
@@ -756,19 +794,17 @@ footer > div {
   }
 }
 /* Menú desplegable en tablets y móviles */
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .site-header {
     height: 80px;
     padding: 0 24px;
-    position: relative;
-    z-index: 10;
   }
   .menu-toggle {
     display: block;
     border: 0;
     background: transparent;
     color: var(--ink);
-    font-size: 0.85rem;
+    font-size: 1rem;
     padding: 12px 0 12px 12px;
   }
   nav {
@@ -790,13 +826,17 @@ footer > div {
     align-items: stretch;
     gap: 0;
   }
-  nav a {
+  nav a,
+  nav a:last-child {
     padding: 10px;
     font-size: 1rem;
   }
-  nav .nav-rsvp {
-    margin-top: 15px;
+  nav a + a {
+    border-left: 0;
+    border-top: 1px solid #1827511c;
   }
+}
+@media (max-width: 900px) {
   .timeline {
     grid-template-columns: 1fr 1fr;
   }
@@ -889,16 +929,6 @@ footer > div {
     padding: 30px;
     gap: 10px;
   }
-  .climate {
-    flex-wrap: wrap;
-    gap: 25px;
-  }
-  .climate > div {
-    min-width: 120px;
-  }
-  .climate p {
-    flex-basis: 100%;
-  }
   .dress-art img {
     height: 300px;
   }
@@ -934,13 +964,32 @@ footer > div {
   }
 }
 
+/* Esquinas redondeadas y sombras suaves */
+.card,
+.notice,
+.editorial-note,
+.dress-art,
+.art-panel,
+.button,
+.filter button,
+input:not([type="checkbox"]),
+textarea {
+  border-radius: var(--radius);
+}
+.art-panel {
+  box-shadow: var(--shadow);
+}
 /* Locally bundled fonts: no calls to external font services. */
 h1,
 h2,
 h3 {
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "EB Garamond Heading", Georgia, serif;
 }
-.invitation h1,
+.invitation h1 {
+  font-family: "Parfumerie", cursive;
+  font-style: normal;
+  letter-spacing: 0;
+}
 .signature {
   font-family: "Great Vibes", cursive;
   font-style: normal;
@@ -950,11 +999,164 @@ h3 {
   font-size: clamp(3.7rem, 7.8vw, 7rem);
 }
 .invitation h1 span {
-  font-family: "Cormorant Garamond", serif;
-  font-style: italic;
+  font-family: "Parfumerie", cursive;
+  font-style: normal;
+  font-size: 0.84em;
 }
 .signature {
   font-size: 2.7rem;
+}
+/* Cubre la franja del marco para que el contenido no asome por encima del menú fijo */
+.site-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: calc(var(--frame) + env(safe-area-inset-top));
+  background: var(--paper) url("/illustrations/paper.svg");
+}
+.carousel {
+  position: relative;
+  padding: 0 30px;
+  margin-bottom: 40px;
+}
+.carousel-track {
+  --visible: 3;
+  --gap: 24px;
+  display: flex;
+  gap: var(--gap);
+  /* Espacio extra para que no se recorte la sombra de las fotos */
+  margin: -10px -14px -24px;
+  padding: 10px 14px 24px;
+  scroll-padding-inline: 14px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+.hotel-slide {
+  flex: 0 0 calc((100% - var(--gap) * (var(--visible) - 1)) / var(--visible));
+  scroll-snap-align: start;
+  text-align: center;
+}
+.hotel-slide a:not(.text-link) {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+.hotel-slide .hotel-photo {
+  width: 100%;
+  margin-bottom: 0;
+  transition: transform 0.4s;
+}
+.hotel-slide a:hover .hotel-photo {
+  transform: scale(1.04);
+}
+.hotel-slide h3 {
+  font-size: 1.6rem;
+  margin: 0 0 4px;
+}
+.hotel-slide p {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+}
+.carousel-btn {
+  position: absolute;
+  top: calc(50% - 60px);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.carousel-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.carousel-btn.prev {
+  left: 8px;
+}
+.carousel-btn.next {
+  right: 8px;
+}
+.discount {
+  text-align: center;
+  margin: 0 30px 45px;
+}
+.discount p {
+  margin: 0 0 12px;
+}
+.code-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  border: 1px dashed var(--ink);
+  border-radius: var(--radius);
+  background: #81a6b829;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.code-chip strong {
+  font-size: 1.4rem;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+}
+.code-chip.long {
+  max-width: 100%;
+  margin: 12px 0 8px;
+}
+.code-chip.long strong {
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
+}
+.copy-icon {
+  flex: none;
+  opacity: 0.75;
+}
+.code-chip:hover .copy-icon {
+  opacity: 1;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 1000px) {
+  .carousel-track {
+    --visible: 2;
+  }
+}
+@media (max-width: 640px) {
+  .carousel {
+    padding: 0 12px;
+    margin-bottom: 30px;
+  }
+  .carousel-track {
+    --visible: 1;
+  }
+  .carousel-btn.prev {
+    left: 6px;
+  }
+  .carousel-btn.next {
+    right: 6px;
+  }
 }
 @media (max-width: 800px) {
   .invitation h1 {
@@ -1006,9 +1208,6 @@ h3 {
   .card {
     padding: 22px;
   }
-  .climate {
-    padding: 30px 12px;
-  }
   .art-panel {
     padding: 18px;
   }
@@ -1043,9 +1242,6 @@ h3 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 12px 25px;
-  }
-  nav .nav-rsvp {
-    margin-top: 0;
   }
   .hero {
     padding-top: 12px;

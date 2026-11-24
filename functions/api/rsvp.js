@@ -49,18 +49,12 @@ export async function onRequestPost({ request, env }) {
   const validated = validateRsvp(data);
   if (!validated.ok) return reply(400, { ok: false });
   if (data.website) return reply(200, { ok: true });
-  if (
-    typeof data.invitation !== "string" ||
-    !/^[a-f0-9]{64}$/.test(data.invitation)
-  )
-    return reply(403, { ok: false });
   try {
     const upstream = await fetch(env.APPS_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...validated.data,
-        invitation: data.invitation,
         secret: env.RSVP_SHARED_SECRET,
       }),
       signal: AbortSignal.timeout(15000),

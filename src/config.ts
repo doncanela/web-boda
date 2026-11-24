@@ -3,10 +3,9 @@ export const wedding = {
   date: "2027-11-06T12:00:00+01:00",
   dateLabel: "6 de noviembre de 2027",
   city: "Granada",
-  iban: "",
-  dressCode: "",
+  iban: "ES4720859276310330621562",
   privacyContact: "",
-  rsvpEnabled: false,
+  rsvpEnabled: true,
   venues: [
     {
       name: "Sagrario de la Catedral",
@@ -25,11 +24,9 @@ export const wedding = {
       name: "Carmen de los Chapiteles",
       subtitle: "La celebración",
       time: "13:30",
-      address:
-        "Dirección y acceso exacto pendientes de confirmar con el Carmen",
+      address: "Camino fuente del avellano, 4, Centro. 18010 Granada.",
       verified: false,
-      source:
-        "https://turismo.granada.org/es/empresas/otras-salas-reuniones/carmen-chapiteles",
+      source: "https://www.carmendeloschapiteles.com",
       illustration: "/illustrations/alhambra.webp",
       photo: "",
       description:
@@ -41,35 +38,70 @@ export const wedding = {
   timeline: [
     {
       time: "12:00",
+      icon: "/illustrations/timeline/el-si-quiero.webp",
       title: "El sí, quiero",
       detail: "Ceremonia · Sagrario de la Catedral",
     },
     {
       time: "13:30",
-      title: "El primer brindis",
+      icon: "/illustrations/timeline/coctel.webp",
+      title: "Cóctel",
       detail: "Celebración · Carmen de los Chapiteles",
     },
     {
-      time: "Por confirmar",
+      time: "15:30",
+      icon: "/illustrations/timeline/mesa.webp",
       title: "A la mesa",
-      detail: "Compartir, saborear y celebrar",
+      detail: "Comienza el banquete",
     },
     {
-      time: "Por confirmar",
-      title: "Hasta que el cuerpo aguante",
-      detail: "Música, baile y muchos recuerdos",
+      time: "17:30",
+      icon: "/illustrations/timeline/fiesta.webp",
+      title: "¡Fiesta!",
+      detail: "Hasta que el cuerpo aguante",
     },
   ],
 };
 export type Hotel = {
   name: string;
   photo: string;
-  address: string;
   url: string;
-  code: string;
-  note: string;
+  distance: string;
+  walkUrl: string;
 };
-export const hotels: Hotel[] = [];
+export const hotelCode = "BODAJYP";
+export const albaicinAirbnb =
+  "https://www.airbnb.es/s/Albaicín--Granada--España/homes?place_id=ChIJdatdWs78cQ0RGBUGPyOC9Wg&checkin=2027-11-05&checkout=2027-11-07&date_picker_type=calendar&ref_fsid=cd051a64-a759-458b-aa26-bd10e62bcb51&ref_search_session_id=40410c3c-d698-4ce7-8bab-80288db9dbaf&search_mode=regular_search&refinement_paths%5B%5D=%2Fhomes&flexible_trip_lengths%5B%5D=one_week&monthly_start_date=2026-12-01&monthly_length=3&monthly_end_date=2027-03-01&price_filter_input_type=0&price_filter_num_nights=2&channel=EXPLORE&ne_lat=37.18443361967012&ne_lng=-3.58497871335004&sw_lat=37.17225211583898&sw_lng=-3.603604757225554&zoom=15.571990659620583&search_by_map=true&search_type=unknown&zoom_level=15&source=structured_search_input_header";
+export const hotels: Hotel[] = [
+  {
+    name: "Áurea Catedral",
+    photo: "/hoteles/aurea-catedral.avif",
+    url: "https://www.eurostarshotels.com/aurea-catedral.html",
+    distance: "230 m",
+    walkUrl: "https://maps.app.goo.gl/FSYYs3HcwnxoSkRZA",
+  },
+  {
+    name: "Eurostars Gran Vía",
+    photo: "/hoteles/eurostars-gran-via.webp",
+    url: "https://www.eurostarshotels.com/eurostars-gran-via.html",
+    distance: "280 m",
+    walkUrl: "https://maps.app.goo.gl/HooWfmgGxS6Dx14XA",
+  },
+  {
+    name: "Eurostars Puerta Real",
+    photo: "/hoteles/puerta-real.avif",
+    url: "https://www.eurostarshotels.com/eurostars-puerta-real.html",
+    distance: "450 m",
+    walkUrl: "https://maps.app.goo.gl/bX6K7EZTYGyMb8Y29",
+  },
+  {
+    name: "Eurostars San Antón",
+    photo: "/hoteles/san-anton.avif",
+    url: "https://www.eurostarshotels.com/eurostars-san-anton.html",
+    distance: "1,0 km",
+    walkUrl: "https://maps.app.goo.gl/dK2yv2S2fqKjkdAs8",
+  },
+];
 export const routes = [
   {
     duration: "2 horas",
@@ -97,23 +129,7 @@ export const routes = [
     url: "https://tickets.alhambra-patronato.es/",
   },
 ];
-export const transport = [
-  {
-    title: "Autobuses urbanos",
-    url: "https://www.transportesrober.com/attcliente/contacto.htm",
-    text: "Consulta líneas, paradas y cambios de servicio antes de viajar.",
-  },
-  {
-    title: "Metro de Granada",
-    url: "https://www.metropolitanogranada.es/horarios",
-    text: "Útil para conectar con otras zonas de la ciudad. Revisa la parada más cercana a tu alojamiento.",
-  },
-  {
-    title: "Transporte metropolitano",
-    url: "https://ctagr.es/",
-    text: "Conexiones con municipios del área metropolitana.",
-  },
-];
+export const sagrarioCarmenRoute = "https://maps.app.goo.gl/eFnKEEsWKensXMwC7";
 export const maps = (place: string, mode?: string) =>
   mode
     ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place + " Granada")}&travelmode=${mode}`

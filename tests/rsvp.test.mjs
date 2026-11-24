@@ -2,7 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
 import { readFileSync } from "node:fs";
-import { createHash } from "node:crypto";
 import { validateRsvp } from "../src/validation.mjs";
 import { onRequestPost } from "../functions/api/rsvp.js";
 const good = {
@@ -77,7 +76,6 @@ test("API rechaza origen ajeno y cuerpos demasiado grandes", async () => {
   );
 });
 function harness() {
-  const token = "a".repeat(64);
   const rows = [
     [
       "Nombre",
@@ -90,9 +88,6 @@ function harness() {
   const props = {
     RSVP_ENABLED: "true",
     SHARED_SECRET: "test",
-    INVITATIONS_JSON: JSON.stringify({
-      [createHash("sha256").update(token).digest("hex")]: "ana@example.com",
-    }),
   };
   const sheet = {
     getLastRow: () => rows.length,
@@ -107,11 +102,6 @@ function harness() {
       getScriptProperties: () => ({ getProperty: (k) => props[k] }),
     },
     SpreadsheetApp: { openById: () => ({ getSheetByName: () => sheet }) },
-    Utilities: {
-      DigestAlgorithm: { SHA_256: "sha256" },
-      computeDigest: (_, v) =>
-        Array.from(createHash("sha256").update(v).digest()),
-    },
     ContentService: {
       MimeType: { JSON: "json" },
       createTextOutput: (s) => ({ setMimeType: () => JSON.parse(s) }),
@@ -133,14 +123,13 @@ function harness() {
             ...good,
             email: "ana@example.com",
             secret: "test",
-            invitation: token,
             ...p,
           }),
         },
       }),
   };
 }
-test("Apps Script insert-only, normalisation, invalid token and no overwrite", () => {
+test("Apps Script insert-only, normalisation and no overwrite", () => {
   const h = harness();
   assert.equal(h.send({}).ok, true);
   assert.equal(h.rows.length, 2);
@@ -148,7 +137,7 @@ test("Apps Script insert-only, normalisation, invalid token and no overwrite", (
   assert.equal(h.rows.length, 2);
   assert.equal(h.rows[1][0], "Ana");
   h.send({ email: "other@example.com" });
-  assert.equal(h.rows.length, 2);
+  assert.equal(h.rows.length, 3);
 });
 test("Apps Script guards secrets, consent and formula injection", () => {
   const h = harness();

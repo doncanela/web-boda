@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BrowserRouter,
@@ -8,14 +8,18 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { wedding as w, hotels, routes, transport, maps } from "./config";
+import {
+  wedding as w,
+  hotels,
+  hotelCode,
+  albaicinAirbnb,
+  sagrarioCarmenRoute,
+  routes,
+  maps,
+} from "./config";
 import { validateRsvp } from "./validation.mjs";
-import "@fontsource/cormorant-garamond/latin-400.css";
-import "@fontsource/cormorant-garamond/latin-400-italic.css";
-import "@fontsource/great-vibes/latin-400.css";
 import "./styles.css";
 import { External, Title, Countdown, PageFrame } from "./components";
-let invitationInMemory = "";
 const links = [
   ["/", "Inicio"],
   ["/la-boda", "La boda"],
@@ -129,16 +133,144 @@ function Wedding() {
           {w.timeline.map((t) => (
             <li key={t.title}>
               <span>{t.time}</span>
+              <img className="timeline-icon" src={t.icon} alt="" />
               <h3>{t.title}</h3>
               <p>{t.detail}</p>
             </li>
           ))}
         </ol>
-        <p className="muted">
-          Los horarios de comida y fiesta se confirmarán más adelante.
-        </p>
+      </section>
+      <section className="transfer">
+        <div className="notice">
+          <p className="eyebrow">DE LA CEREMONIA A LA CELEBRACIÓN</p>
+          <h2>Traslado al Carmen de los Chapiteles</h2>
+          <p>
+            El trayecto entre el Sagrario y el Carmen de los Chapiteles se
+            realizará andando o en taxi. A pie son unos 20 minutos por zona
+            empedrada, por lo que recomendamos que las invitadas con tacones y
+            las personas a las que les cueste andar vayan en taxi.
+          </p>
+          <External href={sagrarioCarmenRoute}>Ver ruta</External>
+        </div>
       </section>
     </>
+  );
+}
+function CopyCode({
+  code,
+  label = "código",
+  long = false,
+}: {
+  code: string;
+  label?: string;
+  long?: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      className={long ? "code-chip long" : "code-chip"}
+      aria-label={`Copiar ${label} ${code}`}
+      title={copied ? "¡Copiado!" : "Copiar"}
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(code);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch {
+          setCopied(false);
+        }
+      }}
+    >
+      <strong>{code}</strong>
+      <svg
+        className="copy-icon"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        {copied ? (
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        ) : (
+          <>
+            <rect x="9" y="9" width="11" height="11" rx="2" />
+            <path d="M5 15V6a2 2 0 0 1 2-2h9" />
+          </>
+        )}
+      </svg>
+      <span className="sr-only" role="status">
+        {copied ? "¡Copiado!" : ""}
+      </span>
+    </button>
+  );
+}
+function HotelCarousel() {
+  const track = useRef<HTMLUListElement>(null);
+  const [edge, setEdge] = useState({ start: true, end: false });
+  const update = () => {
+    const el = track.current;
+    if (!el) return;
+    setEdge({
+      start: el.scrollLeft < 4,
+      end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4,
+    });
+  };
+  useEffect(() => {
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  const move = (dir: number) => {
+    const el = track.current;
+    const slide = el?.firstElementChild as HTMLElement | null;
+    if (!el || !slide) return;
+    const gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+    el.scrollBy({ left: dir * (slide.offsetWidth + gap), behavior: "smooth" });
+  };
+  return (
+    <section className="carousel" aria-label="Hoteles recomendados">
+      <button
+        type="button"
+        className="carousel-btn prev"
+        aria-label="Hoteles anteriores"
+        disabled={edge.start}
+        onClick={() => move(-1)}
+      >
+        ‹
+      </button>
+      <ul className="carousel-track" ref={track} onScroll={update}>
+        {hotels.map((h) => (
+          <li className="hotel-slide" key={h.name}>
+            <a
+              href={h.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${h.name} (se abre en una pestaña nueva)`}
+            >
+              <img className="hotel-photo" src={h.photo} alt={h.name} />
+            </a>
+            <h3>{h.name}</h3>
+            <p>{h.distance} a pie de la parroquia del Sagrario</p>
+            <External href={h.walkUrl}>Trayecto a pie</External>
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        className="carousel-btn next"
+        aria-label="Hoteles siguientes"
+        disabled={edge.end}
+        onClick={() => move(1)}
+      >
+        ›
+      </button>
+    </section>
   );
 }
 function Stay() {
@@ -147,67 +279,36 @@ function Stay() {
       <Title eyebrow="QUÉDATE UN POQUITO MÁS" title="Como en casa">
         Una escapada a Granada empieza por encontrar tu rincón.
       </Title>
-      {hotels.length ? (
-        <div className="cards">
-          {hotels.map((h) => (
-            <article className="card" key={h.name}>
-              {h.photo && (
-                <img className="hotel-photo" src={h.photo} alt={h.name} />
-              )}
-              <h2>{h.name}</h2>
-              <p>{h.address}</p>
-              <p>{h.note}</p>
-              <p>
-                Código: <strong>{h.code}</strong>
-              </p>
-              <External href={h.url}>Reservar</External>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div className="notice">
-          <p className="eyebrow">ESTAMOS PREPARANDO TU ESTANCIA</p>
-          <h2>Próximamente, nuestros hoteles</h2>
-          <p>
-            Aquí encontrarás los alojamientos con los que acordemos descuentos,
-            sus condiciones y códigos de reserva.
-          </p>
-        </div>
-      )}
+      <HotelCarousel />
+      <div className="discount">
+        <p>Descuento extra en los hoteles mostrados al introducir el código</p>
+        <CopyCode code={hotelCode} />
+      </div>
       <div className="cards two">
         <article className="card">
           <p className="eyebrow">CERCA DE LA CEREMONIA</p>
           <h2>Centro & Catedral</h2>
           <p>
-            Nuestra propuesta para tener la ceremonia a mano y pasear por el
-            centro. Comprueba la ubicación concreta y el acceso en taxi antes de
-            reservar.
+            Áurea Catedral, Eurostars Gran Vía y Eurostars Puerta Real están muy
+            cerca del Sagrario de la Catedral, donde es la ceremonia: puedes ir
+            andando fácilmente, en menos de 5 minutos. Eurostars San Antón está
+            más apartado (a 1 km), así que tenlo en cuenta si quieres llegar a
+            pie.
           </p>
         </article>
         <article className="card">
           <p className="eyebrow">CON ENCANTO GRANADINO</p>
           <h2>Albaicín & Realejo</h2>
           <p>
-            Para disfrutar del ambiente de barrio. Revisa cuestas, escaleras y
-            accesibilidad: una ubicación preciosa también puede venir con un
-            pequeño entrenamiento.
+            No hay hoteles con descuento en esta zona. Albaicín y Realejo son
+            los barrios más bonitos de Granada, pero pueden ser de difícil
+            acceso (incluso inaccesibles para taxis) y su empedrado puede ser
+            incómodo con tacones. Aun así, te dejamos este enlace por si quieres
+            ver alojamientos en el Albaicín.
           </p>
+          <External href={albaicinAirbnb}>Airbnb en el Albaicín</External>
         </article>
       </div>
-      <h2 className="section-heading">Moverse por Granada</h2>
-      <div className="cards">
-        {transport.map((t) => (
-          <article className="card" key={t.title}>
-            <h3>{t.title}</h3>
-            <p>{t.text}</p>
-            <External href={t.url}>Información oficial</External>
-          </article>
-        ))}
-      </div>
-      <p className="muted">
-        Paradas de taxi y conexiones concretas: pendientes de seleccionar los
-        hoteles. No se requiere reserva de transporte para la boda.
-      </p>
     </>
   );
 }
@@ -280,7 +381,6 @@ function Tourism() {
   );
 }
 function Gift() {
-  const [status, setStatus] = useState("");
   return (
     <div className="narrow">
       <Title
@@ -298,31 +398,7 @@ function Gift() {
           Gracias por formar parte de nuestra historia y de todo lo que está por
           venir.
         </p>
-        {w.iban ? (
-          <>
-            <p className="iban">{w.iban}</p>
-            <button
-              className="button"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(w.iban);
-                  setStatus("Cuenta copiada");
-                } catch {
-                  setStatus(
-                    "No se pudo copiar. Selecciona la cuenta y cópiala manualmente.",
-                  );
-                }
-              }}
-            >
-              Copiar cuenta
-            </button>
-            <p role="status">{status}</p>
-          </>
-        ) : (
-          <p className="pending">
-            Compartiremos los datos de la cuenta más adelante.
-          </p>
-        )}
+        <CopyCode code={w.iban} label="cuenta" long />
         <p className="signature">Con cariño, Paula & Javier</p>
       </div>
     </div>
@@ -331,61 +407,51 @@ function Gift() {
 function Dress() {
   return (
     <>
-      <Title
-        eyebrow="ELEGANTES, CÓMODOS, MUY VOSOTROS"
-        title="Vestirse para celebrar"
-      >
-        Noviembre en Granada tiene su encanto. Y, al caer el sol, también su
-        fresquito.
-      </Title>
+      <header className="page-title">
+        <h1>Una ocasión especial merece su mejor versión</h1>
+        <p className="intro">
+          Nos hace mucha ilusión compartir con vosotros un día tan especial y
+          queremos que la elegancia nos acompañe en cada momento de la
+          celebración.
+        </p>
+        <p className="intro">
+          El código de vestimenta de nuestra boda será de{" "}
+          <strong>etiqueta formal</strong>.
+        </p>
+      </header>
       <div className="dress-layout">
         <div className="dress-art">
           <img
-            src="/illustrations/wardrobe.svg"
-            alt="Ejemplo orientativo: vestido con abrigo y traje con abrigo"
+            src="/illustrations/dress-code.webp"
+            alt="Ilustración de una mujer con vestido largo y chal, y un hombre con traje oscuro"
           />
-          <span>INSPIRACIÓN, NO UNA ETIQUETA OBLIGATORIA</span>
         </div>
-        <div>
-          <p className="eyebrow">EL ESTILO DEL DÍA</p>
-          <h2>
-            Un toque especial,
-            <br />a tu manera
-          </h2>
+        <div className="dress-text">
+          <h3>Para ellos</h3>
           <p>
-            {w.dressCode ||
-              "Nuestra etiqueta y preferencias de vestimenta están pendientes de confirmar. Las compartiremos aquí."}
+            Traje en tonos oscuros, camisa, corbata y zapatos de vestir.
+            Apostamos por una elegancia clásica y atemporal.
+          </p>
+          <h3>Para ellas</h3>
+          <p>
+            Vestidos elegantes y de fiesta, acordes con la ocasión. Os pedimos
+            reservar el blanco, el marfil y los tonos similares para la novia.
           </p>
           <h3>Un abrigo que acompañe</h3>
           <p>
-            Piensa en capas que puedas quitar durante el día y recuperar por la
-            noche. En exteriores puede hacer frío.
+            Noviembre en Granada tiene un encanto especial, pero también
+            temperaturas frescas al caer la tarde. Os recomendamos llevar un
+            abrigo o una prenda de entretiempo que complemente vuestro conjunto
+            y os permita disfrutar de los espacios exteriores del Carmen de los
+            Chapiteles.
           </p>
           <h3>Zapatos para disfrutar</h3>
           <p>
-            Ten en cuenta las calles empedradas y las cuestas. Un tacón ancho o
-            un calzado estable hará el paseo más cómodo.
+            Las calles empedradas, las cuestas y los jardines forman parte del
+            encanto de Granada. Un tacón ancho o un calzado elegante y estable
+            será vuestro mejor aliado para disfrutar de principio a fin.
           </p>
         </div>
-      </div>
-      <div className="climate">
-        <div>
-          <strong>17 °C</strong>
-          <span>Máxima media</span>
-        </div>
-        <div>
-          <strong>4,2 °C</strong>
-          <span>Mínima media</span>
-        </div>
-        <p>
-          Referencia histórica de noviembre: estación Granada Aeropuerto, AEMET
-          (1981–2010). No es una previsión para la boda ni una medición del
-          Carmen. Consulta el pronóstico cuando se acerque la fecha.
-          <br />
-          <External href="https://www.aemet.es/es/serviciosclimaticos/datosclimatologicos/valoresclimatologicos?l=5530E">
-            Fuente AEMET
-          </External>
-        </p>
       </div>
     </>
   );
@@ -394,15 +460,11 @@ function RSVP() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
-  const [token] = useState(() => {
-    invitationInMemory =
-      new URLSearchParams(location.hash.slice(1)).get("invitacion") ||
-      invitationInMemory;
-    return invitationInMemory;
-  });
   useEffect(() => {
-    if (location.hash) history.replaceState(null, "", location.pathname);
-  }, []);
+    if (!done) return;
+    const t = setTimeout(() => setDone(false), 5000);
+    return () => clearTimeout(t);
+  }, [done]);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = e.currentTarget;
@@ -411,7 +473,6 @@ function RSVP() {
       ...data,
       consent: data.consent === "on",
       sensitiveConsent: data.sensitiveConsent === "on",
-      invitation: token,
     };
     const result = validateRsvp(payload);
     if (!result.ok) {
@@ -437,7 +498,7 @@ function RSVP() {
       setDone(true);
       f.reset();
       setMessage(
-        "Solicitud procesada. Si tu invitación era válida, tu asistencia ha quedado registrada. Un envío repetido no modifica tus datos.",
+        "¡Gracias! Hemos recibido tu confirmación. Un envío repetido con el mismo email no modifica tus datos.",
       );
     } catch {
       setMessage(
@@ -517,7 +578,7 @@ function RSVP() {
           {busy
             ? "Enviando…"
             : done
-              ? "Solicitud procesada"
+              ? "Confirmación enviada"
               : "Confirmar mi asistencia"}{" "}
           <span>↗</span>
         </button>
@@ -525,8 +586,8 @@ function RSVP() {
           {message}
         </p>
         <p className="field-help">
-          La invitación es individual. Para corregir una confirmación, contacta
-          directamente con Paula o Javier.
+          Para corregir una confirmación, contacta directamente con Paula o
+          Javier.
         </p>
       </form>
     </div>
